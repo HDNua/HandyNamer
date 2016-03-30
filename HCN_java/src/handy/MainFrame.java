@@ -1,37 +1,59 @@
 package handy;
 
-import java.awt.Component;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Vector;
 import java.io.File;
 
-
 import javax.swing.*;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableModel;
 
+
+
+/**
+ * @author HandyMain
+ *
+ */
 public class MainFrame extends JFrame {
+	///////////////////////////////////////////////////
+	// 필드를 정의합니다.
 	private static final long serialVersionUID = 1L;
 	
+	// 
 	JTable table;
 	
+	// 필드 정의의 끝
+	///////////////////////////////////////////////////
 	
+	
+	
+	///////////////////////////////////////////////////
+	// 생성자를 정의합니다.
 	public MainFrame() {
 		initAction();
 		initMenuBar();
 		initTable();
 		
+		
+		
+		originFiles = new Vector<File>();
 		this.setLocation(100, 100);
 	}
 	
+	// 생성자 정의의 끝
+	///////////////////////////////////////////////////
+	
+	
+	
+	///////////////////////////////////////////////////
+	// 초기화 메서드를 정의합니다.
 	ActionListener actionFileClearList;
 	ActionListener actionFileSort;
 	ActionListener actionFileApply;
@@ -41,6 +63,9 @@ public class MainFrame extends JFrame {
 	ActionListener actionSettingStyle;
 	ActionListener actionSettingDeveloper;
 	
+	/**
+	 * 이벤트 핸들러를 초기화 합니다.
+	 */
 	void initAction() {
 		actionFileClearList = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -67,9 +92,20 @@ public class MainFrame extends JFrame {
 				
 			}
 		};
-		
-	}
-	
+		actionSettingStyle = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		};
+		actionSettingDeveloper = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		};
+	}	
+	/**
+	 * 메뉴 바를 초기화 합니다.
+	 */
 	void initMenuBar() {
 		JMenuBar mbar = new JMenuBar();
 		JMenu menu;
@@ -113,44 +149,35 @@ public class MainFrame extends JFrame {
 		// menu: Setting
 		menu = new JMenu("Setting");
 		menuItem = new JMenuItem("Style");
-		menuItem.addActionListener(action);
+		menuItem.addActionListener(actionSettingStyle);
 		menu.add(menuItem);
 		
 		menuItem = new JMenuItem("Developer");
-		menuItem.addActionListener(action);
+		menuItem.addActionListener(actionSettingDeveloper);
 		menu.add(menuItem);
 		mbar.add(menu);
 		
 		setJMenuBar(mbar);
 	}
-	
-	
-	
 	/**
 	 * initialize table object
 	 */
 	void initTable() {
-		/*
-	    String[] columnNames = { 
-		    	"변경 이전",
-		    	"변경 이후",
-		};
-		String[][] data = { {"",""} };
-		*/
-		
-		
 		DropTarget tableDropTarget = new DropTarget() {
-			/**
-			 * 
-			 */
 			private static final long serialVersionUID = 1L;
-
+			
+			/** (non-Javadoc)
+			 * @see java.awt.dnd.DropTarget#drop(java.awt.dnd.DropTargetDropEvent)
+			 */
 			public synchronized void drop(DropTargetDropEvent e) {
 				try {
 					e.acceptDrop(DnDConstants.ACTION_COPY);
-					List<File> transferData = (List<File>)
+					// List<File> transferData = ;
+					addFiles((List<File>)
 							e.getTransferable().getTransferData
-							(DataFlavor.javaFileListFlavor);
+							(DataFlavor.javaFileListFlavor));
+					
+					/*
 					List<File> droppedFiles = transferData;
 					
 					for (File file: droppedFiles) {
@@ -159,6 +186,7 @@ public class MainFrame extends JFrame {
 						DefaultTableModel model = (DefaultTableModel) table.getModel();
 						model.addRow(new Object[]{path, "new one"});
 					}
+					*/
 				}
 				catch (Exception ex) {
 					ex.printStackTrace();
@@ -166,9 +194,7 @@ public class MainFrame extends JFrame {
 			}
 		};
 		
-		
-		
-		DefaultTableModel dtm = new DefaultTableModel(0, 2);
+		DefaultTableModel dtm = new DefaultTableModel(1, 2);
 		table = new JTable(dtm);
 		table.setDropMode(DropMode.INSERT_ROWS);
 		table.setAutoCreateRowSorter(true);
@@ -178,55 +204,57 @@ public class MainFrame extends JFrame {
 
 		JScrollPane scrollPane = new JScrollPane(table);
 		getContentPane().add(scrollPane);
-		setSize(600, 400);
+		setSize(1000, 800);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
+	// 이벤트 핸들러 정의의 끝
+	///////////////////////////////////////////////////
 	
 	
-	void _initTable() {
-	    String[] columnNames = { 
-		    	"이름",
-		    	"이메일",
-		    	"휴대폰", 
-		    	"성별"
-		};
-		String[][] data = {
-		    { "홍길동", "hong@ah.co.kr", "010-1111-1112", "남" },
-		};
-		table = new JTable(data, columnNames);
-		table.setDropMode(DropMode.INSERT_ROWS);
-		table.setAutoCreateRowSorter(true);
-		table.setRowSelectionAllowed(true);
+	
+	private Comparator<File> generalComparator;
+	private Comparator<File> leftIndexComparator;
+	private Comparator<File> rightIndexComparator;
+	
+	
+	
+	///////////////////////////////////////////////////
+	// 내부 메서드를 정의합니다.
+	Vector<File> originFiles;
+	
+	void addFile(File file) {
+		originFiles.add(file);
+		updateTableContents();
+	}
+	void addFiles(Collection<File> files) {
+		originFiles.addAll(files);
 		
-		table.setDropTarget(new DropTarget() {
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
-
-			public synchronized void drop(DropTargetDropEvent e) {
-				try {
-					e.acceptDrop(DnDConstants.ACTION_COPY);
-					List<File> transferData = (List<File>)
-							e.getTransferable().getTransferData
-							(DataFlavor.javaFileListFlavor);
-					List<File> droppedFiles = transferData;
-					
-					for (File file: droppedFiles) {
-						System.out.printf("%s", file.getAbsolutePath());
-						
-					}
-				}
-				catch (Exception ex) {
-					ex.printStackTrace();
-				}
-			}
-		});
-
-		JScrollPane scrollPane = new JScrollPane(table);
-		getContentPane().add(scrollPane);
-		setSize(600, 400);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		DefaultTableModel model = (DefaultTableModel) table.getModel();
+		for (File file: files) {
+			String path = file.getAbsolutePath();
+			System.out.printf("%s \n", path);
+			model.addRow(new Object[]{path, "new one"});
+		}
+		
+		updateTableContents();
 	}
+	
+	void updateTableContents() {
+		setGeneralComparator((File arg0, File arg1) -> {
+			String name1 = arg0.getAbsolutePath();
+			String name2 = arg1.getAbsolutePath();
+			return name1.compareTo(name2);
+		});
+		originFiles.sort((Comparator<File>) getGeneralComparator());
+	}
+	public Comparator<File> getGeneralComparator() {
+		return generalComparator;
+	}
+	public void setGeneralComparator(Comparator<File> generalComparator) {
+		this.generalComparator = generalComparator;
+	}
+	
+	// 
+	///////////////////////////////////////////////////
 }
