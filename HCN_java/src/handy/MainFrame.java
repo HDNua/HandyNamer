@@ -92,6 +92,11 @@ public class MainFrame extends JFrame {
 				
 			}
 		};
+		actionFileClose = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+			}
+		};
 		actionSettingStyle = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -117,32 +122,32 @@ public class MainFrame extends JFrame {
 		};
 		
 		// menu: File
-		menu = new JMenu("¿¿");
-		menuItem = new JMenuItem("¿¿ ¿¿¿");
+		menu = new JMenu("File");
+		menuItem = new JMenuItem("Clear list");
 		menuItem.addActionListener(actionFileClearList);
 		menuItem.setAccelerator(KeyStroke.getKeyStroke('c'));
 		menu.add(menuItem);
 		
-		menuItem = new JMenuItem("¿¿");
+		menuItem = new JMenuItem("Sort");
 		menuItem.addActionListener(actionFileSort);
 		menu.add(menuItem);
 
-		menuItem = new JMenuItem("¿¿");
+		menuItem = new JMenuItem("Apply");
 		menuItem.addActionListener(actionFileApply);
 		menu.add(menuItem);
 		
-		menuItem = new JMenuItem("¿¿¿ ¿¿¿¿ ¿¿ ¿¿ ¿¿");
+		menuItem = new JMenuItem("Remove selected extension's file");
 		menuItem.addActionListener(actionFileRemoveSelectedExt);
 		menu.add(menuItem);
 		
-		menuItem = new JMenuItem("¿¿¿ ¿¿¿ ¿¿ ¿¿ ¿¿ ¿¿ ¿¿");
+		menuItem = new JMenuItem("Remoe NOT selected extension's file");
 		menuItem.addActionListener(actionFileRemoveExceptSelectedExt);
 		menu.add(menuItem);
 		
 		menu.add(new JSeparator());
 		
-		menuItem = new JMenuItem("¿¿");
-		menuItem.addActionListener(action);
+		menuItem = new JMenuItem("Close");
+		menuItem.addActionListener(actionFileClose);
 		menu.add(menuItem);
 		mbar.add(menu);
 		
